@@ -1,4 +1,5 @@
 import { Game, SHAPES, COLS, ROWS } from './engine.mjs';
+import { installFullscreen } from './fullscreen.mjs';
 import { pieceCells, boardCells, drawSquirrels } from './squirrel-renderer.mjs';
 const $ = id => document.getElementById(id);
 const game = new Game();
@@ -26,13 +27,19 @@ function draw() {
   drawSquirrels(ctx, cells, 60, sprites);
 }
 function drawNext() {
-  nextCtx.clearRect(0,0,240,420);
+  const horizontal = document.querySelector('.game').classList.contains('is-landscape');
+  const width = horizontal ? 420 : 240, height = horizontal ? 140 : 420;
+  if(nextCanvas.width !== width)nextCanvas.width=width;
+  if(nextCanvas.height !== height)nextCanvas.height=height;
+  nextCtx.clearRect(0,0,width,height);
   game.queue.slice(0,3).forEach((kind, index) => {
     const points=[];
     SHAPES[kind].forEach((row,y)=>row.forEach((v,x)=>{if(v)points.push([x,y]);}));
     const minX=Math.min(...points.map(p=>p[0])), maxX=Math.max(...points.map(p=>p[0]));
     const minY=Math.min(...points.map(p=>p[1])), maxY=Math.max(...points.map(p=>p[1]));
-    const size=42, offsetX=(240-(maxX-minX+1)*size)/2, offsetY=index*140+(140-(maxY-minY+1)*size)/2;
+    const size=horizontal?30:42;
+    const offsetX=(horizontal?index*140:0)+((horizontal?140:240)-(maxX-minX+1)*size)/2;
+    const offsetY=(horizontal?0:index*140)+(140-(maxY-minY+1)*size)/2;
     nextCtx.save();nextCtx.translate(offsetX,offsetY);
     drawSquirrels(nextCtx, points.map(([x,y])=>({x:x-minX,y:y-minY})), size, sprites);nextCtx.restore();
   });
@@ -164,4 +171,5 @@ async function loadSprites() {
     $('primary').disabled = false;
   }
 }
+installFullscreen({root:gameSection,button:$('fullscreen'),onPause:autoPause,onLayout:()=>{draw();drawNext();},announce});
 sync();draw();drawNext();loadSprites();requestAnimationFrame(frame);

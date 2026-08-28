@@ -4,3 +4,51 @@
 @media(max-width:600px){.shell{padding:0 18px}.masthead{height:43px;font-size:9px;letter-spacing:1px}.heading{margin:20px 0 15px}.eyebrow{font-size:10px}h1{font-size:36px}.game{grid-template-columns:minmax(0,1fr) 104px;gap:15px;padding:8px 0 20px;max-width:440px;margin:auto}.play-area{width:100%;max-width:31svh}.board-wrap{border-width:4px}.dashboard{padding-top:20px}.dashboard h2{display:block;font-size:10px}.dashboard h2 span{display:block;font-size:9px;margin-top:4px}.score-block{padding-bottom:13px}#score{font-size:30px;margin-top:7px;letter-spacing:-1px}.metric{padding:11px 0}.metric p{font-size:22px;margin-top:4px}.next{margin-top:15px}#next{width:75px;margin:6px auto 0}.feedback{font-size:9px;margin:5px 0 12px}.pause{font-size:11px;padding:8px;min-height:44px}.pause kbd{display:none}.ghost-note{font-size:9px;line-height:1.6}.controls{gap:5px;margin-top:15px}.controls button{min-height:45px;gap:3px}.controls small{font-size:9px}.controls span{font-size:22px}.overlay{padding:12px}.overlay-mark{font-size:38px;margin-bottom:20px}.overlay h2{font-size:17px;margin-bottom:12px}.overlay p{font-size:11px;margin-bottom:20px}.primary{font-size:11px;padding:10px 8px}.overlay .overlay-note{font-size:9px}.board-top{font-size:9px}#state{font-size:10px}dl{grid-template-columns:1fr}.version{font-size:10px}footer{font-size:9px}}
 @media(max-width:350px){.shell{padding:0 12px}.game{gap:10px;grid-template-columns:minmax(0,1fr) 88px}.overlay h2{font-size:14px}.overlay-note{display:none}.overlay-mark{margin-bottom:12px}.controls small{font-size:8px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Game-only fullscreen: also used when the native Fullscreen API is unavailable. */
+.game-toolbar{grid-column:1/-1;display:flex;align-items:center;justify-content:flex-end;gap:12px;min-height:44px}
+.fullscreen-title{display:none;font-size:14px;font-weight:bold;letter-spacing:.08em}
+#fullscreen{min-height:44px;border:1px solid #8e9880;border-radius:4px;background:#e6e9dc;padding:8px 15px;font-size:12px;touch-action:manipulation}
+.game.is-fullscreen{position:fixed;inset:0;z-index:1000;width:100%;max-width:none;height:var(--screen-height,100dvh);margin:0;padding:calc(8px + env(safe-area-inset-top,0px)) calc(8px + env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) calc(8px + env(safe-area-inset-left,0px));background:var(--paper);display:grid;grid-template-columns:var(--board-width) var(--side-width);grid-template-rows:44px minmax(0,1fr) 114px;grid-template-areas:"toolbar toolbar" "board stats" "controls controls";gap:10px;justify-content:center;align-content:stretch;overflow:auto;overscroll-behavior:contain}
+.game.is-fullscreen .game-toolbar{grid-area:toolbar;position:sticky;top:0;z-index:3;justify-content:space-between;background:var(--paper)}
+.game.is-fullscreen .fullscreen-title{display:inline}
+.game.is-fullscreen .play-area{display:contents}
+.game.is-fullscreen .board-top{display:none}
+.game.is-fullscreen .board-wrap{grid-area:board;width:var(--board-width);border-width:4px;box-shadow:none;align-self:center;justify-self:center}
+.game.is-fullscreen .controls{grid-area:controls;align-self:end;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:54px 54px;gap:6px;margin:0;width:100%}
+.game.is-fullscreen .controls button{min-height:54px;gap:7px}
+.game.is-fullscreen .controls span{font-size:28px}
+.game.is-fullscreen .controls small{font-size:11px}
+.game.is-fullscreen .dashboard{grid-area:stats;align-self:stretch;min-height:0;padding:0;justify-content:center;gap:6px;overflow:auto}
+.game.is-fullscreen .dashboard h2{display:block;font-size:10px;letter-spacing:.7px}
+.game.is-fullscreen .dashboard h2 span{display:none}
+.game.is-fullscreen .score-block,.game.is-fullscreen .metric{padding:0 0 7px}
+.game.is-fullscreen #score{font-size:25px;letter-spacing:-1px;margin:4px 0 0}
+.game.is-fullscreen .metric p{font-size:21px;margin:4px 0 0}
+.game.is-fullscreen .next{margin:0}
+.game.is-fullscreen #next{width:64px;height:auto;margin:3px auto 0}
+.game.is-fullscreen .feedback,.game.is-fullscreen .ghost-note{display:none}
+.game.is-fullscreen .pause{margin:0;min-height:48px;font-size:12px;justify-content:center;padding:8px 4px;flex-shrink:0}
+.game.is-fullscreen .pause kbd{display:none}
+.game.is-fullscreen .overlay{padding:12px;overflow:auto}
+.game.is-fullscreen .overlay-mark{width:60px;height:60px;margin-bottom:15px}
+.game.is-fullscreen .overlay h2{font-size:17px;margin-bottom:10px}
+.game.is-fullscreen .overlay p{font-size:11px;margin-bottom:15px}
+.game.is-fullscreen .overlay .overlay-note{display:none}
+.game.is-fullscreen .primary{min-height:48px;font-size:12px}
+.game.is-fullscreen.is-landscape{grid-template-rows:44px minmax(0,1fr) 102px;grid-template-areas:"toolbar toolbar" "board stats" "board controls"}
+.game.is-fullscreen.is-landscape .dashboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:42px minmax(0,1fr);gap:6px;align-content:center}
+.game.is-fullscreen.is-landscape .next{grid-column:1/3;min-width:0;min-height:0;height:100%;align-self:center}
+.game.is-fullscreen.is-landscape #next{width:100%;height:calc(100% - 13px);max-width:210px;object-fit:contain;margin:0}
+.game.is-fullscreen.is-landscape .pause{align-self:center}
+.game.is-fullscreen.is-landscape .overlay-mark{width:42px;height:42px;margin-bottom:8px}
+.game.is-fullscreen.is-landscape .overlay h2{font-size:14px}
+.game.is-fullscreen.is-landscape .overlay p{font-size:10px;margin-bottom:9px}
+.game.is-fullscreen.is-landscape .primary{font-size:11px}
+
+.game.is-fullscreen .metric{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.game.is-fullscreen .metric p{margin:0}
+.game.is-fullscreen.is-landscape .score-block{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.game.is-fullscreen.is-landscape #score{margin:0;font-size:22px}
+.game.is-fullscreen.is-landscape .controls{grid-template-rows:48px 48px}
+.game.is-fullscreen.is-landscape .controls button{min-height:48px}

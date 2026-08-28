@@ -9,7 +9,7 @@
 
 | ゲーム名 | 概要 | 開発状況 | 遊び方・公開先 |
 | --- | --- | --- | --- |
-| 手とリス | リスが手をつなぐ、1人用の落ち物パズル | v0.2.0（実機確認前） | [遊び方・実行方法](games/drop-field/README.md) |
+| 手とリス | リスが手をつなぐ落ち物パズル。スマホ全画面モード対応 | v0.3.0（実機確認前） | [遊び方・実行方法](games/drop-field/README.md) |
 
 ## 構成方針
 
@@ -26,6 +26,7 @@ Game/
         ├── style.css      # 表示・レイアウト
         ├── engine.mjs     # ゲームのルール
         ├── game.mjs       # 描画・操作
+        ├── fullscreen.mjs # 全画面モード
         ├── squirrel-renderer.mjs # リスと手の描画
         ├── assets/        # 透過PNG素材
         ├── ASSETS.md      # 素材の作成記録
