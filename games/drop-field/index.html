@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f1e9">
+  <meta name="description" content="積んで、そろえて、消していく。PCとスマートフォンで遊べる落ち物パズル。">
+  <title>DROP FIELD</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./game.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#howto">遊び方へスキップ</a>
+  <div class="shell">
+    <header class="masthead"><span class="collection">GAME / 001</span><span class="edition">FALLING BLOCK PUZZLE</span></header>
+    <main>
+      <div class="heading"><div><p class="eyebrow">積んで、そろえて、消していく。</p><h1>DROP<span>FIELD</span><span class="period">.</span></h1></div><span class="version">v0.1.0</span></div>
+      <section class="game" aria-label="落ち物パズル">
+        <div class="play-area">
+          <div class="board-top"><span>PLAY FIELD</span><span id="state">準備OK</span></div>
+          <div class="board-wrap">
+            <canvas id="board" width="600" height="1200" tabindex="0" role="img" aria-label="10列20行のゲーム盤面。視覚での確認が必要です。" aria-describedby="keys">ゲーム盤面の表示にはCanvasに対応したブラウザーが必要です。</canvas>
+            <div id="overlay" class="overlay">
+              <span class="overlay-mark" aria-hidden="true">↓</span>
+              <h2 id="overlay-title">ひと息、ひと積み。</h2>
+              <p id="overlay-copy">横一列をそろえて<br>ブロックを消そう。</p>
+              <button id="primary" class="primary">ゲームをはじめる <span aria-hidden="true">↗</span></button>
+              <p class="overlay-note" id="overlay-note">PCでも、スマートフォンでも。</p>
+            </div>
+          </div>
+          <div class="controls" aria-label="ゲーム操作">
+            <button data-action="left" aria-label="左に移動（長押し対応）"><span aria-hidden="true">←</span><small>左</small></button>
+            <button data-action="rotate" aria-label="右に90度回転"><span aria-hidden="true">↻</span><small>回転</small></button>
+            <button data-action="right" aria-label="右に移動（長押し対応）"><span aria-hidden="true">→</span><small>右</small></button>
+            <button data-action="down" aria-label="下に移動（長押し対応）"><span aria-hidden="true">↓</span><small>下</small></button>
+            <button data-action="drop" class="drop" aria-label="着地点まで一気に落とす"><span aria-hidden="true">⇓</span><small>一気に落とす</small></button>
+          </div>
+        </div>
+        <aside class="dashboard" aria-label="ゲームの状況">
+          <div class="score-block"><h2>SCORE <span>得点</span></h2><p id="score">0</p></div>
+          <div class="metric"><h2>LEVEL <span>レベル</span></h2><p id="level">01</p></div>
+          <div class="metric"><h2>LINES <span>消した列</span></h2><p id="lines">0</p></div>
+          <section class="next"><h2>NEXT <span>次のブロック</span></h2><canvas id="next" width="240" height="420" role="img" aria-label="ゲームを開始すると次のブロックが表示されます"></canvas></section>
+          <p id="feedback" class="feedback" aria-hidden="true">MAKE SOME SPACE.</p>
+          <button id="pause" class="pause" disabled>一時停止 <kbd>P</kbd></button>
+          <p class="ghost-note">枠線は着地点の目安</p>
+        </aside>
+      </section>
+      <p id="announcement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+      <details id="howto"><summary>遊び方・キーボード操作 <span aria-hidden="true">＋</span></summary><div class="instructions">
+        <p>落ちてくるブロックを動かし、横10マスをすき間なく埋めると、その列が消えます。10列消すごとにレベルが上がり、落下が速くなります。新しいブロックを出せなくなるとゲーム終了です。</p>
+        <dl id="keys"><div><dt>左右移動</dt><dd><kbd>←</kbd> <kbd>→</kbd></dd></div><div><dt>右回転 / 左回転</dt><dd><kbd>↑</kbd> または <kbd>X</kbd> / <kbd>Z</kbd></dd></div><div><dt>下に移動</dt><dd><kbd>↓</kbd></dd></div><div><dt>一気に落とす</dt><dd><kbd>Space</kbd></dd></div><div><dt>一時停止・再開</dt><dd><kbd>P</kbd> または <kbd>Esc</kbd></dd></div></dl>
+        <p>画面ボタンでも操作できます。左右・下は長押しに対応。別のタブやアプリに移ると自動で一時停止します。キーボードで遊ぶときは盤面を選択してください。</p>
+        <p>1 / 2 / 3 / 4列の同時消去で100 / 300 / 500 / 800点 × 現在のレベル。手動で下げると1マス1点、一気に落とすと1マス2点です。</p>
+        <p class="access-note">操作ボタンとゲーム状況は読み上げに対応していますが、盤面を音声だけで把握できる機能は未対応です。得点・進行状況は保存されず、ページを閉じるとリセットされます。</p>
+      </div></details>
+    </main>
+    <footer><span>DROP FIELD — 小さなゲームの実験室</span><span>NO. 001</span></footer>
+  </div>
+  <noscript><p>このゲームを遊ぶにはJavaScriptを有効にしてください。</p></noscript>
+</body>
+</html>
