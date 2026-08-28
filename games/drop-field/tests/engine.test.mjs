@@ -21,3 +21,47 @@ test('landing waits for lock delay and reset is capped',()=>{const g=started();s
 test('blocked spawn ends game',()=>{const g=started();g.board[0].fill('T');g.board[1].fill('T');g.spawn();assert.equal(g.status,'over');});
 test('locking above board ends game without invalid array writes',()=>{const g=started();setPiece(g,'O',3,-1);g.lock();assert.equal(g.status,'over');assert.equal(g.board[-1],undefined);});
 test('deterministic mixed-input simulation preserves board invariants',()=>{let seed=154;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/2**32;};const g=new Game(random);let ended=0;g.start();for(let i=0;i<6000;i++){const action=Math.floor(random()*6);if(action===0)g.move(-1);if(action===1)g.move(1);if(action===2)g.rotate();if(action===3)g.down(true);if(action===4)g.drop();g.tick(100);assert.equal(g.board.length,ROWS);assert.ok(g.board.every(r=>r.length===COLS));assert.ok(g.board.flat().every(v=>v===null||SHAPES[v]));assert.ok(Number.isFinite(g.score));if(g.status==='over'){ended++;g.start();}else assert.ok(g.fits(g.active));}assert.ok(ended>0);});
+
+// Squirrel appearance is independent of the game rules.
+import {pieceCells, boardCells, connections, drawSquirrels} from '../squirrel-renderer.mjs';
+test('isolated and diagonal squirrels do not join hands',()=>{
+  assert.deepEqual(connections([{x:0,y:0}]),[]);
+  assert.deepEqual(connections([{x:0,y:0},{x:1,y:1}]),[]);
+});
+test('all four orthogonal neighbors join the central squirrel once',()=>{
+  const cells=[{x:2,y:2},{x:1,y:2},{x:3,y:2},{x:2,y:1},{x:2,y:3}];
+  const links=connections(cells);
+  assert.equal(links.length,4);
+  assert.equal(links.filter(l=>l.direction==='right').length,2);
+  assert.equal(links.filter(l=>l.direction==='down').length,2);
+});
+test('a filled square has four shared edges, without duplicate connectors',()=>{
+  const cells=pieceCells({matrix:SHAPES.O,x:0,y:0});
+  assert.equal(connections(cells).length,4);
+  assert.equal(connections([...cells,...cells]).length,4);
+});
+test('different piece kinds and touching active cells also join hands',()=>{
+  const b=emptyBoard();b[19][0]='I';b[19][1]='T';
+  assert.equal(connections(boardCells(b)).length,1);
+  const active=pieceCells({matrix:[[1]],x:1,y:18});
+  assert.equal(connections([...boardCells(b),...active]).length,2);
+  assert.equal(connections(boardCells(b)).length,1);
+});
+test('row clearing recomputes connectivity and leaves no stale links',()=>{
+  const b=emptyBoard();b[19].fill('I');b[18][4]='T';b[18][5]='O';
+  const result=clearRows(b);
+  assert.deepEqual(connections(boardCells(result.board)),[{x:4,y:19,direction:'right'}]);
+});
+test('offscreen cells never produce visible hand connections',()=>{
+  assert.deepEqual(connections([{x:2,y:-1},{x:2,y:0}]),[]);
+});
+test('renderer draws upright faces then horizontal and vertical connectors',()=>{
+  const calls=[];
+  const context=Object.fromEntries(['drawImage','save','restore','translate','rotate'].map(name=>[name,(...args)=>calls.push([name,...args])]));
+  const sprites={face:{name:'face'},hands:{name:'hands'}};
+  drawSquirrels(context,[{x:0,y:0},{x:1,y:0},{x:0,y:1}],60,sprites);
+  const draws=calls.filter(c=>c[0]==='drawImage');
+  assert.deepEqual(draws.map(c=>c[1].name),['face','face','face','hands','hands']);
+  assert.deepEqual(calls.filter(c=>c[0]==='rotate'),[['rotate',Math.PI/2]]);
+  assert.equal(calls.filter(c=>c[0]==='save').length,calls.filter(c=>c[0]==='restore').length);
+});

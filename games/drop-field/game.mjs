@@ -1,39 +1,29 @@
 import { Game, SHAPES, COLS, ROWS } from './engine.mjs';
+import { pieceCells, boardCells, drawSquirrels } from './squirrel-renderer.mjs';
 const $ = id => document.getElementById(id);
 const game = new Game();
 const board = $('board'), ctx = board.getContext('2d');
 const nextCanvas = $('next'), nextCtx = nextCanvas.getContext('2d');
-const colors = {I:'#91cbd0',O:'#ead576',T:'#b39bdb',S:'#b1cd7f',Z:'#e69b87',J:'#86a9d4',L:'#dfa66c'};
+let sprites = null;
+let loadingSprites = false;
 const names = {I:'棒型',O:'正方形',T:'T型',S:'S型',Z:'Z型',J:'J型',L:'L型'};
 let previousStatus = '', previousLines = 0, previousQueue = '', previousScore = -1;
 let held = null, last = 0, feedbackUntil = 0;
 const buttons = [...document.querySelectorAll('[data-action]')];
-function cell(context, x, y, size, kind, ghost = false) {
-  if (y < 0) return;
-  const px = x * size, py = y * size;
-  if (ghost) {
-    context.strokeStyle = '#b8c6b2'; context.lineWidth = 2;
-    context.strokeRect(px+5,py+5,size-10,size-10);
-    return;
+function drawGhost(piece) {
+  ctx.strokeStyle = '#b8c6b2'; ctx.lineWidth = 2;
+  for (const {x,y} of pieceCells(piece)) {
+    if (y >= 0) ctx.strokeRect(x*60+5,y*60+5,50,50);
   }
-  context.fillStyle = colors[kind]; context.fillRect(px+2,py+2,size-4,size-4);
-  context.strokeStyle = '#ffffff55'; context.lineWidth = 2;
-  context.strokeRect(px+5,py+5,size-10,size-10);
-  context.fillStyle = '#22292033'; context.fillRect(px+size/2-3,py+size/2-3,6,6);
-}
-function piece(p, ghost = false) {
-  if (!p) return;
-  p.matrix.forEach((row,y) => row.forEach((value,x) => {
-    if (value) cell(ctx, x+p.x, y+p.y, 60, p.kind, ghost);
-  }));
 }
 function draw() {
   ctx.fillStyle = '#242c27'; ctx.fillRect(0,0,600,1200);
   ctx.strokeStyle = '#354037'; ctx.lineWidth = 1;
   for(let x=1;x<COLS;x++){ctx.beginPath();ctx.moveTo(x*60,0);ctx.lineTo(x*60,1200);ctx.stroke();}
   for(let y=1;y<ROWS;y++){ctx.beginPath();ctx.moveTo(0,y*60);ctx.lineTo(600,y*60);ctx.stroke();}
-  game.board.forEach((row,y) => row.forEach((kind,x) => { if(kind) cell(ctx,x,y,60,kind); }));
-  if(game.status==='playing'){piece(game.ghost(),true);piece(game.active);}
+  const cells = boardCells(game.board);
+  if (game.status === 'playing') {drawGhost(game.ghost());cells.push(...pieceCells(game.active));}
+  drawSquirrels(ctx, cells, 60, sprites);
 }
 function drawNext() {
   nextCtx.clearRect(0,0,240,420);
@@ -44,7 +34,7 @@ function drawNext() {
     const minY=Math.min(...points.map(p=>p[1])), maxY=Math.max(...points.map(p=>p[1]));
     const size=42, offsetX=(240-(maxX-minX+1)*size)/2, offsetY=index*140+(140-(maxY-minY+1)*size)/2;
     nextCtx.save();nextCtx.translate(offsetX,offsetY);
-    points.forEach(([x,y])=>cell(nextCtx,x-minX,y-minY,size,kind));nextCtx.restore();
+    drawSquirrels(nextCtx, points.map(([x,y])=>({x:x-minX,y:y-minY})), size, sprites);nextCtx.restore();
   });
   nextCanvas.setAttribute('aria-label',game.queue.length ? '次のブロック：'+game.queue.slice(0,3).map(k=>names[k]).join('、') : '開始後に次のブロックを表示');
 }
@@ -95,6 +85,7 @@ function action(name){
 }
 function togglePause(){game.pause();held=null;sync();draw();}
 $('primary').addEventListener('click',()=>{
+  if (!sprites) {loadSprites();return;}
   if(game.status==='paused')game.pause();
   else {game.start();previousLines=0;$('feedback').textContent='MAKE SOME SPACE.';feedbackUntil=0;}
   sync();draw();board.focus({preventScroll:true});
@@ -142,4 +133,35 @@ function frame(time){
   if(feedbackUntil&&time>feedbackUntil){$('feedback').textContent='MAKE SOME SPACE.';feedbackUntil=0;}
   requestAnimationFrame(frame);
 }
-sync();draw();drawNext();requestAnimationFrame(frame);
+function imageAsset(path) {
+  return new Promise((resolve,reject)=>{
+    const image = new Image();
+    image.onload = ()=>resolve(image);
+    image.onerror = ()=>reject(new Error('Image could not load'));
+    image.src = new URL(path, import.meta.url).href;
+  });
+}
+async function loadSprites() {
+  if (loadingSprites) return;
+  loadingSprites = true;
+  $('primary').disabled = true;
+  $('primary').textContent = 'リスの準備中…';
+  try {
+    const [face,hands] = await Promise.all([
+      imageAsset('./assets/squirrel-face.png'),
+      imageAsset('./assets/squirrel-hands.png')
+    ]);
+    sprites = {face,hands};
+    $('primary').textContent = 'ゲームをはじめる ↗';
+    $('overlay-copy').innerHTML = 'リスと手をつないで<br>横一列をそろえよう。';
+    draw();drawNext();
+  } catch {
+    $('primary').textContent = '画像を読み込み直す';
+    $('overlay-copy').textContent = 'リスの画像を読み込めませんでした。通信を確認して、もう一度お試しください。';
+    announce('ゲーム画像を読み込めませんでした。読み込み直すボタンで再試行できます。');
+  } finally {
+    loadingSprites = false;
+    $('primary').disabled = false;
+  }
+}
+sync();draw();drawNext();loadSprites();requestAnimationFrame(frame);
