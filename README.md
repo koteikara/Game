@@ -10,6 +10,7 @@
 | ゲーム名 | 概要 | 開発状況 | 遊び方・公開先 |
 | --- | --- | --- | --- |
 | 手とリス | リスが手をつなぐ落ち物パズル。スマホ全画面モード対応 | v0.3.0（実機確認前） | [遊び方・実行方法](games/drop-field/README.md) |
+| AREA TRACE | 元祖Qixの仕組みを基準にした陣取りゲーム | 基準版 v0.1 | [遊ぶ](https://game-area-trace.nakatjp.chatgpt.site) / [README](games/area-trace/README.md) |
 
 ## 構成方針
 
@@ -20,17 +21,19 @@
 Game/
 ├── README.md              # リポジトリ全体の案内・ゲーム一覧
 └── games/
-    └── drop-field/        # 落ち物パズル
-        ├── README.md      # 概要・遊び方・開発手順
-        ├── index.html     # ゲーム画面
-        ├── style.css      # 表示・レイアウト
-        ├── engine.mjs     # ゲームのルール
-        ├── game.mjs       # 描画・操作
-        ├── fullscreen.mjs # 全画面モード
-        ├── squirrel-renderer.mjs # リスと手の描画
-        ├── assets/        # 透過PNG素材
-        ├── ASSETS.md      # 素材の作成記録
-        └── tests/         # 自動テスト
+    ├── drop-field/        # 「手とリス」落ち物パズル
+    │   ├── README.md
+    │   ├── index.html
+    │   ├── engine.mjs
+    │   ├── game.mjs
+    │   └── tests/
+    └── area-trace/        # 陣取りゲームの元祖再現基準版
+        ├── README.md
+        ├── index.html
+        ├── style.css
+        ├── engine.mjs
+        ├── game.mjs
+        └── tests/
 ```
 
 使用する技術、対応端末、実行方法、公開方法は、ゲームごとに決めます。
