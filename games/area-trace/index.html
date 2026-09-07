@@ -39,12 +39,14 @@
           </div>
         </div>
 
-        <div class="draw-controls" aria-label="描画速度">
-          <button id="fast" type="button" aria-pressed="false"><span>FAST DRAW</span><small>速い・250点/%</small></button>
-          <button id="slow" type="button" aria-pressed="false"><span>SLOW DRAW</span><small>遅い・500点/%</small></button>
+        <div class="draw-controls" aria-label="線を引く速度">
+          <p class="control-guide"><strong>1</strong> 線の速度を選ぶ</p>
+          <button id="fast" type="button" aria-pressed="false"><span>高速線を引く</span><small>速い・250点/%</small></button>
+          <button id="slow" type="button" aria-pressed="false"><span>低速線を引く</span><small>遅い・500点/%</small></button>
         </div>
 
-        <div class="mobile-controls" aria-label="移動操作">
+        <div class="mobile-controls" aria-label="移動操作" aria-describedby="touch-help">
+          <p id="touch-help"><strong>2</strong> 矢印をタップ／長押し</p>
           <span></span><button data-dir="0,-1" aria-label="上へ移動">▲</button><span></span>
           <button data-dir="-1,0" aria-label="左へ移動">◀</button><button id="pause" type="button" aria-label="一時停止" disabled>Ⅱ</button><button data-dir="1,0" aria-label="右へ移動">▶</button>
           <span></span><button data-dir="0,1" aria-label="下へ移動">▼</button><span></span>
@@ -68,7 +70,7 @@
       <summary>遊び方と元祖再現の範囲 <span aria-hidden="true">＋</span></summary>
       <div class="instructions">
         <p>外周や獲得済み領域の縁を移動し、FAST DRAWまたはSLOW DRAWを選んで未獲得領域へ線を引きます。線を別の縁へつなぐと、QIXがいない側を獲得します。75%以上でステージクリアです。</p>
-        <p id="controls-help">キーボードは矢印キーで移動、Zを押しながら矢印キーでFAST DRAW、Xを押しながら矢印キーでSLOW DRAW、PまたはEscで一時停止。スマートフォンは描画速度を選び、方向ボタンを長押しします。</p>
+        <p id="controls-help">スマートフォンは「高速線を引く」か「低速線を引く」を選び、矢印をタップすると1マス、長押しすると連続で移動します。外周だけを移動するときは、選択中の線ボタンをもう一度押して解除します。キーボードは矢印キーで移動、Z＋矢印キーで高速線、X＋矢印キーで低速線、PまたはEscで一時停止します。</p>
         <p>描画中の線にQIXが触れる、SPARXに接触する、停止中にFUSEが追いつくとミスです。TIME LINEが0になるとSPARXが増えて高速化します。3面目以降はQIXが2体になり、線で分断するとその場でクリアして倍率が上がります。</p>
         <p id="canvas-note" class="note">元祖との比較用試作です。ゲーム名、描画、配色、音源は独自で、Qixの名称や素材はゲーム内タイトルに使用していません。盤面はCanvasによる視覚表現のため、音声だけで遊べる機能は未対応です。</p>
       </div>

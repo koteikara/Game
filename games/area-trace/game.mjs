@@ -27,6 +27,14 @@ function setDirection(dx, dy) {
   canvas.focus({ preventScroll: true });
 }
 
+function beginTouchMove(dx, dy) {
+  if (game.status !== "playing") return;
+  game.setDirection(dx, dy);
+  // A quick tap can end before the next animation step, so move once now.
+  game.stepMarker();
+  game.moveAcc = 0;
+}
+
 function stopDirection() {
   game.setDirection(0, 0);
 }
@@ -231,7 +239,8 @@ for (const button of document.querySelectorAll("[data-dir]")) {
   button.addEventListener("pointerdown", (event) => {
     event.preventDefault();
     button.setPointerCapture?.(event.pointerId);
-    setDirection(dx, dy);
+    beginTouchMove(dx, dy);
+    syncUi();
   });
   button.addEventListener("pointerup", stopDirection);
   button.addEventListener("pointercancel", stopDirection);
