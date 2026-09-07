@@ -289,6 +289,14 @@ for (const button of document.querySelectorAll("[data-dir]")) {
   button.addEventListener("lostpointercapture", stopDirection);
 }
 
+// Game controls are held down to play. Suppress text selection, drag previews,
+// and the mobile copy/context menu only inside these control groups.
+for (const controls of document.querySelectorAll(".draw-controls, .mobile-controls")) {
+  for (const eventName of ["contextmenu", "selectstart", "dragstart"]) {
+    controls.addEventListener(eventName, (event) => event.preventDefault());
+  }
+}
+
 ui.fast.addEventListener("click", () => selectMode("fast"));
 ui.slow.addEventListener("click", () => selectMode("slow"));
 ui.pause.addEventListener("click", () => { game.pause(); syncUi(); });
