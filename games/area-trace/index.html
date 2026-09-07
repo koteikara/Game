@@ -30,11 +30,11 @@
 
       <div class="play-column">
         <div class="board-wrap">
-          <canvas id="board" width="800" height="1040" tabindex="0" role="img" aria-label="40列52行の陣取りフィールド。視覚での確認が必要です。" aria-describedby="canvas-note controls-help">Canvasに対応したブラウザーが必要です。</canvas>
+          <canvas id="board" width="800" height="1040" tabindex="0" role="img" aria-label="40列52行の陣取りフィールド。白い二重丸のYOUがプレイヤー、敵はピンクまたはオレンジ色で敵と表示されます。" aria-describedby="canvas-note controls-help">Canvasに対応したブラウザーが必要です。</canvas>
           <div id="overlay" class="overlay">
             <p class="overlay-kicker">ORIGINAL RULE REFERENCE</p>
             <h2 id="overlay-title">75%を切り取れ</h2>
-            <p id="overlay-copy">外周から線を引き、動く敵を囲わない側を陣地にします。</p>
+            <p id="overlay-copy">白い丸の「YOU」を動かし、敵を囲わない側を陣地にします。</p>
             <button id="primary" type="button">ゲームを始める</button>
           </div>
         </div>
@@ -54,8 +54,9 @@
       </div>
 
       <aside class="legend">
-        <h2>THREATS</h2>
+        <h2>見分け方</h2>
         <dl>
+          <div class="player-guide"><dt><i class="sample player"></i>YOU</dt><dd>白い二重丸がプレイヤー</dd></div>
           <div><dt><i class="sample qix"></i>QIX</dt><dd>描画中の線に触れる</dd></div>
           <div><dt><i class="sample sparx"></i>SPARX</dt><dd>外周と陣地の縁を移動</dd></div>
           <div><dt><i class="sample fuse"></i>FUSE</dt><dd>描画中に止まると追ってくる</dd></div>
@@ -69,7 +70,7 @@
     <details id="howto">
       <summary>遊び方と元祖再現の範囲 <span aria-hidden="true">＋</span></summary>
       <div class="instructions">
-        <p>外周や獲得済み領域の縁を移動し、FAST DRAWまたはSLOW DRAWを選んで未獲得領域へ線を引きます。線を別の縁へつなぐと、QIXがいない側を獲得します。75%以上でステージクリアです。</p>
+        <p>白い二重丸の「YOU」がプレイヤーです。ピンクやオレンジ色で「敵」と表示されるものを避けます。外周や獲得済み領域の縁を移動し、高速線または低速線を選んで未獲得領域へ線を引きます。線を別の縁へつなぐと、QIXがいない側を獲得します。75%以上でステージクリアです。</p>
         <p id="controls-help">スマートフォンは「高速線を引く」か「低速線を引く」を選び、矢印をタップすると1マス、長押しすると連続で移動します。外周だけを移動するときは、選択中の線ボタンをもう一度押して解除します。キーボードは矢印キーで移動、Z＋矢印キーで高速線、X＋矢印キーで低速線、PまたはEscで一時停止します。</p>
         <p>描画中の線にQIXが触れる、SPARXに接触する、停止中にFUSEが追いつくとミスです。TIME LINEが0になるとSPARXが増えて高速化します。3面目以降はQIXが2体になり、線で分断するとその場でクリアして倍率が上がります。</p>
         <p id="canvas-note" class="note">元祖との比較用試作です。ゲーム名、描画、配色、音源は独自で、Qixの名称や素材はゲーム内タイトルに使用していません。盤面はCanvasによる視覚表現のため、音声だけで遊べる機能は未対応です。</p>

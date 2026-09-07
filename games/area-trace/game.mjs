@@ -49,6 +49,22 @@ function pathColor() {
   return game.drawMode === "slow" ? "#ff4fa3" : "#ffdc5e";
 }
 
+function drawTag(text, x, y, color) {
+  const px = Math.max(18, Math.min(canvas.width - 18, x * CELL));
+  const py = Math.max(16, Math.min(canvas.height - 8, y * CELL));
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = "900 14px Arial, sans-serif";
+  ctx.lineJoin = "round";
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = "#02040c";
+  ctx.strokeText(text, px, py);
+  ctx.fillStyle = color;
+  ctx.fillText(text, px, py);
+  ctx.restore();
+}
+
 function drawBoard() {
   ctx.fillStyle = "#02040c";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -102,8 +118,9 @@ function drawBoard() {
   }
 
   for (let qIndex = 0; qIndex < game.qixes.length; qIndex++) {
-    const points = game.qixPoints(game.qixes[qIndex]);
-    ctx.strokeStyle = qIndex % 2 ? "#41f5d0" : "#ff4fa3";
+    const qix = game.qixes[qIndex];
+    const points = game.qixPoints(qix);
+    ctx.strokeStyle = qIndex % 2 ? "#ff923d" : "#ff4fa3";
     ctx.lineWidth = 2.4;
     ctx.shadowColor = ctx.strokeStyle;
     ctx.shadowBlur = 8;
@@ -111,17 +128,31 @@ function drawBoard() {
     points.forEach((p, index) => index ? ctx.lineTo(p.x * CELL, p.y * CELL) : ctx.moveTo(p.x * CELL, p.y * CELL));
     ctx.stroke();
     ctx.shadowBlur = 0;
+    drawTag("敵", qix.x, qix.y - 2.8, ctx.strokeStyle);
   }
 
   for (const sparx of game.sparx) {
     ctx.save();
     ctx.translate(sparx.x * CELL, sparx.y * CELL);
-    ctx.rotate(Math.PI / 4);
     ctx.fillStyle = game.superSparx ? "#ff5470" : "#ffdc5e";
     ctx.shadowColor = ctx.fillStyle;
     ctx.shadowBlur = 8;
-    ctx.fillRect(-5.5, -5.5, 11, 11);
+    ctx.strokeStyle = "#02040c";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i < 16; i++) {
+      const angle = -Math.PI / 2 + i * Math.PI / 8;
+      const radius = i % 2 ? 4 : 9;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+      if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
     ctx.restore();
+    const tagY = sparx.y < 3 ? sparx.y + 1.3 : sparx.y - 1.3;
+    drawTag("敵", sparx.x, tagY, game.superSparx ? "#ff5470" : "#ffdc5e");
   }
 
   const fuse = game.fusePosition();
@@ -133,16 +164,27 @@ function drawBoard() {
     ctx.arc(fuse.x * CELL, fuse.y * CELL, 7, 0, Math.PI * 2);
     ctx.fill();
     ctx.shadowBlur = 0;
+    drawTag("敵", fuse.x, fuse.y - 1.2, "#ff5470");
   }
 
   ctx.save();
   ctx.translate(game.marker.x * CELL, game.marker.y * CELL);
-  ctx.rotate(Math.PI / 4);
-  ctx.fillStyle = "#fff";
-  ctx.shadowColor = "#fff";
-  ctx.shadowBlur = 10;
-  ctx.fillRect(-5, -5, 10, 10);
+  ctx.fillStyle = "#04101d";
+  ctx.strokeStyle = "#fff";
+  ctx.lineWidth = 4;
+  ctx.shadowColor = "#41f5d0";
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  ctx.arc(0, 0, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#41f5d0";
+  ctx.beginPath();
+  ctx.arc(0, 0, 4, 0, Math.PI * 2);
+  ctx.fill();
   ctx.restore();
+  drawTag("YOU", game.marker.x, game.marker.y < 3 ? game.marker.y + 1.25 : game.marker.y - 1.25, "#fff");
 }
 
 function overlayForStatus() {
@@ -153,7 +195,7 @@ function overlayForStatus() {
   ui.overlay.hidden = false;
   if (game.status === "ready") {
     ui["overlay-title"].textContent = "75%を切り取れ";
-    ui["overlay-copy"].textContent = "外周から線を引き、動く敵を囲わない側を陣地にします。";
+    ui["overlay-copy"].textContent = "白い丸の「YOU」を動かし、敵を囲わない側を陣地にします。";
     ui.primary.textContent = "ゲームを始める";
   } else if (game.status === "paused") {
     ui["overlay-title"].textContent = "PAUSE";
